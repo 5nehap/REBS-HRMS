@@ -1,0 +1,46 @@
+{
+  "employee": {
+    "id": "EMP-001",
+    "name": "Alex Johnson",
+    "department": "Engineering",
+    "office_latitude": 28.6139,
+    "office_longitude": 77.2090,
+    "company_timezone": "Asia/Kolkata"
+  },
+  "leave_balance": {
+    "casual_leave": 8,
+    "sick_leave": 5,
+    "total_available_leave": 13
+  },
+  "attendance_records": [
+    {
+      "id": "ATT-001",
+      "employee_id": "EMP-001",
+      "working_date": "2026-11-14",
+      "check_in_timestamp": "2026-11-14T09:02:15+05:30",
+      "check_out_timestamp": "2026-11-14T18:05:40+05:30",
+      "attendance_status": "Present"
+    },
+    {
+      "id": "ATT-002",
+      "employee_id": "EMP-001",
+      "working_date": "2026-11-15",
+      "check_in_timestamp": "2026-11-15T08:55:10+05:30",
+      "check_out_timestamp": "2026-11-15T17:50:22+05:30",
+      "attendance_status": "Present"
+    }
+  ],
+  "attendance_events": {},
+  "leave_requests": [
+    {
+      "id": "LV-001",
+      "employee_id": "EMP-001",
+      "leave_type": "Casual",
+      "start_date": "2026-10-10",
+      "end_date": "2026-10-11",
+      "reason": "Personal family commitment",
+      "status": "Approved"
+    }
+  ]
+}
+
