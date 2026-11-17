@@ -8,70 +8,51 @@
     "company_timezone": "Asia/Kolkata"
   },
   "leave_balance": {
-    "casual_leave": 8,
-    "sick_leave": 3,
-    "total_available_leave": 11
+    "casual_leave": 4,
+    "sick_leave": 2,
+    "total_available_leave": 6
   },
   "attendance_records": [
     {
-      "id": "ATT-1794930037240",
+      "id": "ATT-1794938946844",
       "employee_id": "EMP-001",
       "working_date": "2026-11-17",
-      "check_in_timestamp": "2026-11-17T20:03:55.213979",
-      "check_out_timestamp": "2026-11-17T20:04:12.831789",
+      "check_in_timestamp": "2026-11-17T23:39:03.737777",
+      "check_out_timestamp": "2026-11-17T23:39:39.182284",
       "attendance_status": "Present"
     }
   ],
   "attendance_events": {
-    "64a2c0a0-0a2d-4b51-896e-91541fb914f5": {
+    "78f93269-b170-4ac9-b259-a1eb5b2b4aef": {
       "employeeId": "EMP-001",
       "eventType": "CHECK_IN",
-      "timestamp": "2026-11-17T20:03:55.213979",
-      "latitude": 10.0158867,
-      "longitude": 76.3200554,
+      "timestamp": "2026-11-17T23:39:03.737777",
+      "latitude": 10.0158966,
+      "longitude": 76.3200586,
       "response": {
-        "id": "ATT-1794930037240",
+        "id": "ATT-1794938946844",
         "employee_id": "EMP-001",
         "working_date": "2026-11-17",
-        "check_in_timestamp": "2026-11-17T20:03:55.213979",
+        "check_in_timestamp": "2026-11-17T23:39:03.737777",
         "check_out_timestamp": null,
         "attendance_status": "Present"
       }
     },
-    "04b8fd66-c404-4f53-b695-48b53d87e558": {
+    "490c8c4d-3ce6-42b3-9025-cb34e944c372": {
       "employeeId": "EMP-001",
       "eventType": "CHECK_OUT",
-      "timestamp": "2026-11-17T20:04:12.831789",
-      "latitude": 10.0158867,
-      "longitude": 76.3200554,
+      "timestamp": "2026-11-17T23:39:39.182284",
+      "latitude": 10.0158844,
+      "longitude": 76.320063,
       "response": {
-        "id": "ATT-1794930037240",
+        "id": "ATT-1794938946844",
         "employee_id": "EMP-001",
         "working_date": "2026-11-17",
-        "check_in_timestamp": "2026-11-17T20:03:55.213979",
-        "check_out_timestamp": "2026-11-17T20:04:12.831789",
+        "check_in_timestamp": "2026-11-17T23:39:03.737777",
+        "check_out_timestamp": "2026-11-17T23:39:39.182284",
         "attendance_status": "Present"
       }
     }
   },
-  "leave_requests": [
-    {
-      "id": "LV-001",
-      "employee_id": "EMP-001",
-      "leave_type": "Casual",
-      "start_date": "2026-10-10",
-      "end_date": "2026-10-11",
-      "reason": "Personal family commitment",
-      "status": "Approved"
-    },
-    {
-      "id": "LV-1794930087388",
-      "employee_id": "EMP-001",
-      "leave_type": "Sick",
-      "start_date": "2026-11-20",
-      "end_date": "2026-11-21",
-      "reason": "sick leave request",
-      "status": "Pending"
-    }
-  ]
+  "leave_requests": []
 }
