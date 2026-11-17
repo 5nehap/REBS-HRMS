@@ -3,8 +3,8 @@
     "id": "EMP-001",
     "name": "Alex Johnson",
     "department": "Engineering",
-    "office_latitude": 28.6139,
-    "office_longitude": 77.2090,
+    "office_latitude": 9.9867592,
+    "office_longitude": 76.2857138,
     "company_timezone": "Asia/Kolkata"
   },
   "leave_balance": {
