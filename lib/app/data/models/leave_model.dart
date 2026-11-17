@@ -17,6 +17,15 @@ class LeaveModel {
     required this.status,
   });
 
+  /// Calculates calendar days requested (inclusive of start and end date)
+  int get requestedDays {
+    final start = DateTime.tryParse(startDate);
+    final end = DateTime.tryParse(endDate);
+    if (start == null || end == null) return 0;
+    if (end.isBefore(start)) return 0;
+    return end.difference(start).inDays + 1;
+  }
+
   factory LeaveModel.fromJson(Map<String, dynamic> json) {
     return LeaveModel(
       id:

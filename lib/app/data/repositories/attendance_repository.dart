@@ -12,8 +12,7 @@ class AttendanceRepository {
     required this.localDatabase,
   });
 
-  /// Fetches monthly attendance history from API (`/attendance?month=YYYY-MM`)
-  /// and updates local database cache.
+  /// Fetches monthly attendance history from API (`/attendance?month=YYYY-MM`).
   Future<List<AttendanceModel>> fetchAttendanceHistory({String? month}) async {
     final queryParams = <String, dynamic>{};
     if (month != null && month.isNotEmpty) {
@@ -35,16 +34,11 @@ class AttendanceRepository {
       list = [];
     }
 
-    final records = list
+    final remoteRecords = list
         .map((e) => AttendanceModel.fromJson(e as Map<String, dynamic>))
         .toList();
 
-    // Cache fetched records to local storage
-    if (records.isNotEmpty) {
-      await saveAttendanceRecords(records);
-    }
-
-    return records;
+    return remoteRecords;
   }
 
   /// Sends an attendance event to the API (`POST /attendance/events`).
@@ -126,6 +120,11 @@ class AttendanceRepository {
     return await localDatabase.getPendingAttendanceEvents(employeeId);
   }
 
+  /// Retrieves all recorded events (Pending, Synced, Rejected) for an employee.
+  Future<List<AttendanceEventModel>> getAllEvents(String employeeId) async {
+    return await localDatabase.getAllAttendanceEvents(employeeId);
+  }
+
   /// Marks an event as SYNCED in the persistent queue.
   Future<void> markEventSynced(String eventId) async {
     await localDatabase.markEventSynced(eventId);
@@ -139,5 +138,65 @@ class AttendanceRepository {
   /// Increments retry count and updates timestamp following network attempt.
   Future<void> updateRetryMetadata(String eventId) async {
     await localDatabase.incrementEventRetry(eventId);
+  }
+
+  /// Derives today's attendance status from SQLite local source of truth
+  /// incorporating any locally pending and rejected attendance events.
+  Future<String> deriveTodayAttendanceStatus(
+    String employeeId,
+    String workingDate,
+  ) async {
+    // 1. Check local daily attendance record
+    final record = await getTodayAttendance(employeeId, workingDate);
+
+    // 2. Check pending/stored events for this working date
+    final pendingEvents = await getPendingEvents(employeeId);
+    final todayEvents = pendingEvents
+        .where((e) => e.workingDate == workingDate)
+        .toList();
+
+    final hasCheckOut =
+        record?.checkOutTimestamp != null ||
+        todayEvents.any((e) => e.eventType == 'CHECK_OUT');
+
+    if (hasCheckOut) {
+      return 'Checked Out';
+    }
+
+    final hasCheckIn =
+        record?.checkInTimestamp != null ||
+        todayEvents.any((e) => e.eventType == 'CHECK_IN');
+
+    if (hasCheckIn) {
+      return 'Checked In';
+    }
+
+    return 'Not Checked In';
+  }
+
+  /// Safely merges server attendance records with locally saved records without
+  /// overwriting local working dates that contain pending unsynced events.
+  /// Preserves local SQLite as source of truth and caches server history.
+  Future<void> syncAndMergeServerRecords(
+    String employeeId,
+    List<AttendanceModel> serverRecords,
+  ) async {
+    if (serverRecords.isEmpty) return;
+
+    // Get all pending events to identify dates that have local uncommitted changes
+    final pendingList = await getPendingEvents(employeeId);
+    final pendingDates = pendingList.map((e) => e.workingDate).toSet();
+
+    final safeToSave = <AttendanceModel>[];
+    for (final serverRecord in serverRecords) {
+      // If today or a date has pending local events, do NOT overwrite local state with stale server state
+      if (!pendingDates.contains(serverRecord.workingDate)) {
+        safeToSave.add(serverRecord);
+      }
+    }
+
+    if (safeToSave.isNotEmpty) {
+      await saveAttendanceRecords(safeToSave);
+    }
   }
 }

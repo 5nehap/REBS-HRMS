@@ -29,18 +29,21 @@ class SyncStatusChip extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: chipColor.withAlpha(30),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: chipColor),
+        color: chipColor.withAlpha(25),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: chipColor, width: 1),
       ),
       child: Text(
         labelText,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           color: chipColor,
-          fontSize: 12,
+          fontSize: 10,
           fontWeight: FontWeight.w600,
+          height: 1.2,
         ),
       ),
     );

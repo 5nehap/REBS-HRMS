@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../controllers/attendance_controller.dart';
 import '../../../data/repositories/attendance_repository.dart';
 import '../../../logics/attendance_logic.dart';
+import '../../../logics/sync_logic.dart';
 
 class AttendanceBinding extends Bindings {
   @override
@@ -10,6 +11,7 @@ class AttendanceBinding extends Bindings {
       () => AttendanceController(
         attendanceRepository: Get.find<AttendanceRepository>(),
         attendanceLogic: Get.find<AttendanceLogic>(),
+        syncLogic: Get.find<SyncLogic>(),
       ),
     );
   }

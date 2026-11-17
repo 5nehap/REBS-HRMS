@@ -443,6 +443,28 @@ class LocalDatabase {
     }
   }
 
+  /// Retrieves all recorded events (Pending, Synced, Rejected) for an employee.
+  Future<List<AttendanceEventModel>> getAllAttendanceEvents(
+    String employeeId,
+  ) async {
+    try {
+      final db = await database;
+      final maps = await db.query(
+        AppConstants.tableAttendanceEvents,
+        where: 'employee_id = ?',
+        whereArgs: [employeeId],
+        orderBy: 'created_at ASC',
+      );
+
+      return maps.map((e) => AttendanceEventModel.fromJson(e)).toList();
+    } catch (e) {
+      throw LocalDatabaseException(
+        message: 'Failed to retrieve all attendance events',
+        originalError: e,
+      );
+    }
+  }
+
   /// Marks an attendance event as SYNCED.
   Future<void> markEventSynced(String eventId) async {
     try {
