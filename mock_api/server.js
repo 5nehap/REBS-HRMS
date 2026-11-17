@@ -217,7 +217,12 @@ apiRouter.post('/attendance/events', async (req, res) => {
   }
 
   // Geofence Validation: office distance must be within 200m
-  const distance = calculateDistanceInMeters(latitude, longitude, OFFICE_LAT, OFFICE_LNG);
+  const distance = calculateDistanceInMeters(
+    latitude,
+    longitude,
+    Number(db.employee.office_latitude),
+    Number(db.employee.office_longitude)
+  );
   if (distance > MAX_DISTANCE_METERS) {
     return res.status(422).json({
       success: false,

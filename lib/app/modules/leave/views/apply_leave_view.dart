@@ -9,11 +9,13 @@ class ApplyLeaveView extends GetView<LeaveController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Apply for Leave')),
+      appBar: AppBar(
+        title: const Text('Apply for Leave'),
+      ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: LeaveForm(
-          onSubmit: () {
-            controller.submitLeave();
+          onSuccess: () async {
             Get.back();
           },
         ),

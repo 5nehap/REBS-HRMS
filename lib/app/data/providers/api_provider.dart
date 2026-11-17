@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../core/config/app_config.dart';
 import '../../core/errors/api_exception.dart';
 
@@ -25,9 +26,16 @@ class ApiProvider {
         ),
       );
 
-      _dio.interceptors.add(
-        LogInterceptor(requestBody: true, responseBody: true, error: true),
-      );
+      if (kDebugMode) {
+        _dio.interceptors.add(
+          LogInterceptor(
+            requestBody: true,
+            responseBody: true,
+            error: true,
+            logPrint: (obj) => debugPrint('[Dio] $obj'),
+          ),
+        );
+      }
     }
   }
 
@@ -124,14 +132,26 @@ class ApiProvider {
     final statusCode = response?.statusCode;
     final responseData = response?.data;
 
+    // Structured debug logging for developers
+    if (kDebugMode) {
+      debugPrint(
+        '[ApiProvider] DioError: type=${error.type}, code=$statusCode, url=${error.requestOptions.uri}, message=${error.message}',
+      );
+    }
+
     String message = 'An unexpected error occurred';
     List<String> validationErrors = [];
+    String? conflictType;
 
     if (responseData is Map<String, dynamic>) {
       if (responseData['message'] != null) {
         message = responseData['message'].toString();
       } else if (responseData['error'] != null) {
         message = responseData['error'].toString();
+      }
+
+      if (responseData['conflictType'] != null) {
+        conflictType = responseData['conflictType'].toString();
       }
 
       if (responseData['errors'] is List) {
@@ -143,20 +163,30 @@ class ApiProvider {
       message = responseData;
     }
 
+    // Timeouts
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.sendTimeout ||
         error.type == DioExceptionType.receiveTimeout) {
       return NetworkException(
-        message: 'Request timed out. Please check your connection.',
+        message:
+            'The server is taking longer than expected. Your attendance is saved and will be retried.',
         statusCode: statusCode,
         data: responseData,
       );
     }
 
-    if (error.type == DioExceptionType.connectionError) {
+    // Connection errors / connection refused / socket failures
+    final isConnectionError =
+        error.type == DioExceptionType.connectionError ||
+        (error.error != null &&
+            (error.error.toString().contains('Connection refused') ||
+                error.error.toString().contains('SocketException') ||
+                error.error.toString().contains('Failed host lookup')));
+
+    if (isConnectionError) {
       return NetworkException(
         message:
-            'Unable to connect to the server. Please ensure the server is running.',
+            'Unable to connect to the server. Your attendance is safely saved on this device.',
         statusCode: statusCode,
         data: responseData,
       );
@@ -173,6 +203,7 @@ class ApiProvider {
         return ConflictException(
           message: message,
           statusCode: 409,
+          conflictType: conflictType,
           data: responseData,
         );
       case 422:
@@ -187,7 +218,7 @@ class ApiProvider {
       case 503:
       case 504:
         return ServerException(
-          message: message,
+          message: 'Something went wrong on the server. Please try again later.',
           statusCode: statusCode ?? 500,
           data: responseData,
         );
